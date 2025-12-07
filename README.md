@@ -50,6 +50,15 @@ vim.keymap.set('n', '<leader>bs', function()
 end, { silent = true })
 ```
 
+Create scratch file without filename, which will no be saved to disk:
+
+```lua
+require('scratch').create({
+    nofile = true,
+    filetype = 'python',
+})
+```
+
 ## Integration with picker.nvim
 
 scratch.nvim provides a picker.nvim source to fuzzy find scratch files.

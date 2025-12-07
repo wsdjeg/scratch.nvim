@@ -6,14 +6,27 @@ local config = {
 }
 
 function M.create(opt)
-    local filename = vim.fn.input({
-        prompt = 'file name:',
-    })
-
-    if #filename > 0 then
-        vim.cmd.edit(config.scratch_dir .. '/' .. filename)
-        vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+    local buffer
+    if opt.nofile then
+        buffer = vim.api.nvim_create_buf(config.buflisted, false)
+        vim.api.nvim_set_option_value('buftype', 'nofile', { buf = buffer })
+        if opt.filetype then
+            vim.api.nvim_set_option_value('filetype', opt.filetype, { buf = buffer })
+        end
+    else
+        local filename = vim.fn.input({
+            prompt = 'file name:',
+        })
+        if #filename > 0 then
+            buffer = vim.fn.bufload(config.scratch_dir .. '/' .. filename)
+        end
     end
+
+    if buffer then
+        vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = buffer })
+        vim.api.nvim_win_set_buf(0, buffer)
+    end
+    return ''
 end
 
 function M.setup(opt)
