@@ -7,13 +7,17 @@ function M.create(opt)
 		prompt = "file name:",
 	})
 
-	vim.cmd.edit(scratch_dir .. filename)
+	vim.cmd.edit(scratch_dir .. '/' .. filename)
 end
 
 function M.setup(opt)
 	opt = opt or {}
 
 	scratch_dir = opt.directory or scratch_dir
+
+    if vim.fn.isdirectory(scratch_dir) == 0 then
+        vim.fn.mkdir(scratch_dir, 'p')
+    end
 end
 
 return M
