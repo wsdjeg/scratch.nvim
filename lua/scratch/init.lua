@@ -5,6 +5,8 @@ local config = {
     buflisted = false,
 }
 
+local nofile_buffers = {}
+
 local augroup = vim.api.nvim_create_augroup('scratch.nvim', { clear = true })
 
 function M.create(opt)
@@ -36,7 +38,7 @@ function M.create(opt)
     end
 
     if buffer then
-        vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = buffer })
+        table.insert(nofile_buffers, buffer)
         vim.api.nvim_win_set_buf(0, buffer)
     end
     return ''
@@ -61,6 +63,10 @@ end
 
 function M.get_config()
     return config
+end
+
+function M.get_nofile_buffers()
+    return nofile_buffers
 end
 
 return M

@@ -1,10 +1,11 @@
 local M = {}
 
 local previewer = require('picker.previewer.file')
+local buf_previewer = require('picker.previewer.buffer')
 
 local list_files_cmd = { 'rg', '--files' }
 
-local get_icon
+local devicon
 
 local config = require('scratch').get_config()
 
@@ -18,21 +19,20 @@ function M.set(opt)
     if opt.cmd then
         list_files_cmd = opt.cmd
     end
-    local ok, devicon = pcall(require, 'nvim-web-devicons')
+    local ok
+    ok, devicon = pcall(require, 'nvim-web-devicons')
     if not ok then
         devicon = nil
-    else
-        get_icon = devicon.get_icon
     end
 end
 
 function M.get()
-    return vim.tbl_map(
+    local items = vim.tbl_map(
         function(t)
-            if get_icon then
-                local icon, hl = get_icon(t)
+            if devicon then
+                local icon, hl = devicon.get_icon(t)
                 return {
-                    value = get_path(t),
+                    value = { file = get_path(t) },
                     str = (icon or '󰈔') .. ' ' .. t,
                     highlight = {
                         { 0, 2, hl },
@@ -40,7 +40,7 @@ function M.get()
                 }
             end
             return {
-                value = get_path(t),
+                value = { file = get_path(t) },
                 str = t,
             }
         end,
@@ -51,17 +51,46 @@ function M.get()
             { trimempty = true }
         )
     )
+    for _, buf in ipairs(require('scratch').get_nofile_buffers()) do
+        local ft = vim.api.nvim_get_option_value('filetype', { buf = buf })
+        if devicon then
+            local icon, hl = devicon.get_icon_by_filetype(ft)
+            table.insert(items, {
+                value = { buf = buf },
+                str = (icon or '󰈔') .. ' No Name',
+                highlight = {
+                    { 0, 2, hl },
+                },
+            })
+        else
+            table.insert(items, {
+                value = { buf = buf },
+                str = 'No Name' .. ' filetype:' .. ft,
+            })
+        end
+    end
+    return items
 end
 
 function M.actions()
     return {
         ['<C-v>'] = function(entry)
-            vim.cmd('vsplit ' .. entry.value)
-            vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+            if entry.value.buf then
+                vim.cmd.split()
+                vim.api.nvim_win_set_buf(0, entry.value.buf)
+            else
+                vim.cmd('vsplit ' .. entry.value.file)
+                vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+            end
         end,
         ['<C-t>'] = function(entry)
-            vim.cmd('tabedit ' .. entry.value)
-            vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+            if entry.value.buf then
+                vim.cmd.tabnew()
+                vim.api.nvim_win_set_buf(0, entry.value.buf)
+            else
+                vim.cmd('tabedit ' .. entry.value.file)
+                vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+            end
         end,
     }
 end
@@ -84,15 +113,26 @@ end
 
 ---@field item PickerItem
 function M.default_action(item)
-    vim.cmd('edit ' .. item.value)
-    vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+    if item.value.buf then
+        vim.api.nvim_win_set_buf(0, item.value.buf)
+    else
+        vim.cmd('edit ' .. item.value.file)
+        vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
+    end
 end
 
 M.preview_win = true
 
 ---@field item PickerItem
 function M.preview(item, win, buf)
-    previewer.preview(item.value, win, buf)
+    if item.value.buf then
+        buf_previewer.filetype = vim.api.nvim_get_option_value('filetype', { buf = item.value.buf })
+        buf_previewer.buflines = vim.api.nvim_buf_get_lines(item.value.buf, 0, -1, false)
+        vim.g.wsdjeg = buf_previewer.buflines
+        buf_previewer.preview(1, win, buf, true)
+    else
+        previewer.preview(item.value.file, win, buf)
+    end
 end
 
 return M
