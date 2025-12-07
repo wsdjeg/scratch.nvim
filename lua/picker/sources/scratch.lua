@@ -6,8 +6,10 @@ local list_files_cmd = { 'rg', '--files' }
 
 local get_icon
 
+local config = require('scratch').get_config()
+
 local function get_path(f)
-    return require('scratch').get_directory() .. '/' .. f
+    return config.scratch_dir .. '/' .. f
 end
 
 function M.set(opt)
@@ -55,9 +57,11 @@ function M.actions()
     return {
         ['<C-v>'] = function(entry)
             vim.cmd('vsplit ' .. entry.value)
+            vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
         end,
         ['<C-t>'] = function(entry)
             vim.cmd('tabedit ' .. entry.value)
+            vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
         end,
     }
 end
@@ -81,6 +85,7 @@ end
 ---@field item PickerItem
 function M.default_action(item)
     vim.cmd('edit ' .. item.value)
+    vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = 0 })
 end
 
 M.preview_win = true

@@ -24,7 +24,8 @@ Then use `:Plug install scratch.nvim` to install this plugin.
 
 ```lua
 require('scratch').setup({
-    directory = '~/.scratch'
+    directory = '~/.scratch',
+    buflisted = false,
 })
 ```
 
