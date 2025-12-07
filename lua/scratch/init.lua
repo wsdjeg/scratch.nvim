@@ -5,6 +5,8 @@ local config = {
     buflisted = false,
 }
 
+local augroup = vim.api.nvim_create_augroup('scratch.nvim', { clear = true })
+
 function M.create(opt)
     local buffer
     if opt.nofile then
@@ -13,6 +15,17 @@ function M.create(opt)
         if opt.filetype then
             vim.api.nvim_set_option_value('filetype', opt.filetype, { buf = buffer })
         end
+        vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
+            group = augroup,
+            buffer = buffer,
+            callback = function(ev)
+                if
+                    vim.api.nvim_get_option_value('buflisted', { buf = buffer }) ~= config.buflisted
+                then
+                    vim.api.nvim_set_option_value('buflisted', config.buflisted, { buf = ev.buf })
+                end
+            end,
+        })
     else
         local filename = vim.fn.input({
             prompt = 'file name:',
