@@ -66,7 +66,9 @@ function M.get_config()
 end
 
 function M.get_nofile_buffers()
-    return nofile_buffers
+    return vim.tbl_filter(function(b)
+        return vim.api.nvim_buf_is_valid(b)
+    end, nofile_buffers)
 end
 
 return M
