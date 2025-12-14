@@ -33,7 +33,7 @@ function M.create(opt)
             prompt = 'file name:',
         })
         if #filename > 0 then
-            buffer = vim.fn.bufload(config.scratch_dir .. '/' .. filename)
+            buffer = vim.fn.bufnr(config.scratch_dir .. '/' .. filename, true)
         end
     end
 
