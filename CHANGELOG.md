@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/wsdjeg/scratch.nvim/compare/v0.2.0...v0.3.0) (2025-12-14)
+
+
+### Features
+
+* support scratch in picker ([81b924f](https://github.com/wsdjeg/scratch.nvim/commit/81b924fef595ec1740140bfbcb8ae485d1490795))
+
+
+### Bug Fixes
+
+* filter valid buffers ([7fdc5b9](https://github.com/wsdjeg/scratch.nvim/commit/7fdc5b94bc1ead4e78450c7cc18bfc79e2a47d9d))
+* use bufnr(f, create) to add buf ([acec343](https://github.com/wsdjeg/scratch.nvim/commit/acec3432b134a05109ac045dc55835307809bbc6))
+
 ## [0.2.0](https://github.com/wsdjeg/scratch.nvim/compare/v0.1.0...v0.2.0) (2025-12-07)
 
 
