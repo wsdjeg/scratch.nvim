@@ -2,6 +2,7 @@
 
 A lightweight scratch file manager for Neovim.
 
+[![Run Tests](https://github.com/wsdjeg/scratch.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/wsdjeg/scratch.nvim/actions/workflows/test.yml)
 [![GitHub License](https://img.shields.io/github/license/wsdjeg/scratch.nvim)](LICENSE)
 [![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/wsdjeg/scratch.nvim)](https://github.com/wsdjeg/scratch.nvim/issues)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/m/wsdjeg/scratch.nvim)](https://github.com/wsdjeg/scratch.nvim/commits/master/)
@@ -78,3 +79,4 @@ Love this plugin? Follow [me](https://wsdjeg.net/) on
 ## License
 
 This project is licensed under the GPL-3.0 License.
+
